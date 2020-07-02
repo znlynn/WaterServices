@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WaterServices.Models;
 
@@ -16,7 +12,7 @@ namespace WaterServices.Controllers
     {
         public async Task<ActionResult> Index()
         {
-            List<WaterData> Streams = new List<WaterData>();
+            WaterData RiverData = new WaterData();
 
             using (var client = new HttpClient())
             { 
@@ -26,7 +22,7 @@ namespace WaterServices.Controllers
 
                 //Get data using HttpClient  
                 HttpResponseMessage Res = await client.GetAsync("?format=json&countyCd=29071&parameterCd=00060,00065,00010&siteType=ST&siteStatus=all");
-                Console.WriteLine(Res.Content);
+
                 //Checking the response is successful or not which is sent using HttpClient  
                 if (Res.IsSuccessStatusCode)
                 {
@@ -35,19 +31,15 @@ namespace WaterServices.Controllers
                     Response.Wait();
                     if (Response.IsCompleted)
                     {
-                        //var data = JObject.Parse(Response.Result);
-                        Streams = JsonConvert.DeserializeObject<List<WaterData>>(Response.Result);
-                        //Streams.FirstOrDefault().Name = Streams.Where(x => x.value. == "Picked_Up" || x.JobStatus == "Picked Up").ToList().Count();
-                        Console.Write(Streams);
+                        var data = JObject.Parse(Response.Result)["value"]["timeSeries"];
+                        RiverData.Name = data[0]["sourceInfo"]["siteName"].ToString();
+                        RiverData.Discharge = (int)data[0]["values"][0]["value"][0]["value"];
+                        RiverData.GageHeight = (double)data[1]["values"][0]["value"][0]["value"];
+                        RiverData.Temp = (double)data[2]["values"][0]["value"][0]["value"];
                     }
-                        
-
-                    //Deserializing the response  
-                    // Streams = JsonConvert.DeserializeObject<List<WaterData>>(Response);
-
                 }
                 //Pass stream data to view  
-                return View(Streams);
+                return View(RiverData);
             }
         }
     }

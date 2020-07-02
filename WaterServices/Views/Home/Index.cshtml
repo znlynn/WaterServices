@@ -1,10 +1,10 @@
-﻿@model IEnumerable<WaterServices.Models.WaterData>
+﻿@model WaterServices.Models.WaterData
 
 @{
-    ViewData["Title"] = "Stream Data";
+    ViewData["Title"] = "River Data";
 }
 
-<h2>Index</h2>
+<h2>River Data</h2>
 
 <table class="table">
     <thead>
@@ -25,21 +25,19 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => Model.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Discharge)
+                @Html.DisplayFor(modelItem => Model.Discharge)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.GageHeight)
+                @Html.DisplayFor(modelItem => Model.GageHeight)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Temp)
+                @Html.DisplayFor(modelItem => Model.Temp)
             </td>
         </tr>
-}
     </tbody>
 </table>
